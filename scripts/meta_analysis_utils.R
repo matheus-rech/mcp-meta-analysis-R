@@ -17,7 +17,10 @@ validate_data <- function(path, format){
   if(length(missing_cols) > 0){
     stop(paste('Missing columns:', paste(missing_cols, collapse=', ')))
   }
-  assign('.current_data', data, envir = .GlobalEnv)
+  if (!exists("meta_analysis_env", envir = .GlobalEnv)) {
+    assign("meta_analysis_env", new.env(parent = emptyenv()), envir = .GlobalEnv)
+  }
+  assign('.current_data', data, envir = get("meta_analysis_env", envir = .GlobalEnv))
   data
 }
 
