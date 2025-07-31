@@ -29,10 +29,38 @@ function(req, data_format = "csv"){
     stop("File size exceeds the 5 MB limit.")
   }
   
-  # Validate content type
-  valid_content_types <- c("text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-  if (!req$HTTP_CONTENT_TYPE %in% valid_content_types) {
-    stop("Invalid content type. Only CSV and Excel files are allowed.")
+  # Validate content type and file signature
+  valid_content_types <- c(
+    "text/csv",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/octet-stream"
+  )
+  content_type_valid <- req$HTTP_CONTENT_TYPE %in% valid_content_types
+
+  # Check file signature (magic number)
+  is_csv <- function(raw_bytes) {
+    # CSV files are plain text, so we check if the first bytes are printable ASCII or UTF-8 BOM
+    if (length(raw_bytes) >= 3 && all(raw_bytes[1:3] == as.raw(c(0xEF, 0xBB, 0xBF)))) {
+      # UTF-8 BOM present, treat as CSV
+      return(TRUE)
+    }
+    # Check if first 512 bytes are printable or whitespace
+    ascii_check <- all(raw_bytes[1:min(512, length(raw_bytes))] %in% as.raw(c(9, 10, 13, 32:126)))
+    return(ascii_check)
+  }
+
+  is_excel <- function(raw_bytes) {
+    # XLSX files are ZIP archives: first 4 bytes are 50 4B 03 04
+    if (length(raw_bytes) >= 4 && all(raw_bytes[1:4] == as.raw(c(0x50, 0x4B, 0x03, 0x04)))) {
+      return(TRUE)
+    }
+    return(FALSE)
+  }
+
+  file_signature_valid <- is_csv(req$postBody) || is_excel(req$postBody)
+
+  if (!content_type_valid && !file_signature_valid) {
+    stop("Invalid file type. Only CSV and Excel files are allowed.")
   }
   
   tmp <- tempfile(fileext = ifelse(data_format == "excel", ".xlsx", ".csv"))
