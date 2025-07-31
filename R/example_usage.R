@@ -11,6 +11,9 @@ client$initialize_meta_analysis(list(
 ))
 
 # Upload study CSV data
+if (!file.exists("studies.csv")) {
+  stop("Error: The file 'studies.csv' does not exist. Please provide the required file and try again.")
+}
 csv <- readLines("studies.csv")
 client$upload_study_data(list(
   data_format = "csv",
