@@ -45,11 +45,13 @@ perform_analysis <- function(heterogeneity_test=TRUE, publication_bias=TRUE, sen
 }
 
 # Generate forest plot
-generate_forest_plot <- function(plot_style='classic', confidence_level=0.95){
+generate_forest_plot <- function(plot_style='classic', confidence_level=0.95, model='random'){
   res <- get('.current_result', envir=.GlobalEnv)
   temp_file <- tempfile(pattern = "forest_plot", fileext = ".png")
   png(temp_file, width=800, height=600)
-  forest(res, comb.fixed=FALSE, comb.random=TRUE, digits=2)
+  comb.fixed <- model %in% c('fixed', 'both')
+  comb.random <- model %in% c('random', 'both')
+  forest(res, comb.fixed=comb.fixed, comb.random=comb.random, digits=2)
   dev.off()
   temp_file
 }
