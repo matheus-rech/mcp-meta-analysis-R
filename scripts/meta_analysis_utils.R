@@ -44,10 +44,11 @@ perform_analysis <- function(heterogeneity_test=TRUE, publication_bias=TRUE, sen
 # Generate forest plot
 generate_forest_plot <- function(plot_style='classic', confidence_level=0.95){
   res <- get('.current_result', envir=.GlobalEnv)
-  png('forest_plot.png', width=800, height=600)
+  temp_file <- tempfile(pattern = "forest_plot", fileext = ".png")
+  png(temp_file, width=800, height=600)
   forest(res, comb.fixed=FALSE, comb.random=TRUE, digits=2)
   dev.off()
-  'forest_plot.png'
+  temp_file
 }
 
 # Assess publication bias with funnel plot
