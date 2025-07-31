@@ -11,6 +11,11 @@ async function run() {
     analysis_model: 'random'
   });
 
+  try {
+    await access('studies.csv');
+  } catch (err) {
+    throw new Error("The file 'studies.csv' does not exist. Please provide the file and try again.");
+  }
   const csv = await readFile('studies.csv', 'utf-8');
   await client.uploadStudyData({
     data_format: 'csv',
