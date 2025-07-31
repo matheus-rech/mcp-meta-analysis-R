@@ -19,4 +19,5 @@ COPY templates/ /meta_analysis/templates/
 
 EXPOSE 8080
 
+USER non-root
 CMD ["Rscript", "/meta_analysis/scripts/mcp_server.R"]
