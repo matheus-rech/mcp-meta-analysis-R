@@ -52,7 +52,10 @@ async function run() {
   await client.disconnect();
 }
 
-run().catch(console.error);
+run().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
 ```
 
 Run the script with `npx ts-node src/example.ts` after installing the dependencies.
