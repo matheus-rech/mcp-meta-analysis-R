@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "example": "ts-node src/example.ts"
+    "example": "ts-node --esm src/example.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "github:modelcontextprotocol/typescript-sdk"
