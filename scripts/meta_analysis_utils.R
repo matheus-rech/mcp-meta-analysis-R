@@ -55,10 +55,11 @@ assess_publication_bias <- function(methods=c('funnel_plot','egger_test')){
   res <- get('.current_result', envir=.GlobalEnv)
   out <- list()
   if('funnel_plot' %in% methods){
-    png('funnel_plot.png', width=800, height=600)
+    plot_file <- tempfile(pattern = "funnel_plot_", fileext = ".png")
+    png(plot_file, width=800, height=600)
     funnel(res)
     dev.off()
-    out$funnel_plot <- 'funnel_plot.png'
+    out$funnel_plot <- plot_file
   }
   if('egger_test' %in% methods){
     out$egger <- tryCatch(ranktest(res), error=function(e) NA)
