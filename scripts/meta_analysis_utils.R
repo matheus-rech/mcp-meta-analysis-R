@@ -61,7 +61,7 @@ assess_publication_bias <- function(methods=c('funnel_plot','egger_test')){
     out$funnel_plot <- 'funnel_plot.png'
   }
   if('egger_test' %in% methods){
-    out$egger <- tryCatch(metest(res), error=function(e) NA)
+    out$egger <- tryCatch(ranktest(res), error=function(e) NA)
   }
   out
 }
