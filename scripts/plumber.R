@@ -84,7 +84,23 @@ function(heterogeneity_test = TRUE, publication_bias = TRUE, sensitivity_analysi
 #* @param confidence_level Confidence level
 #* @post /generate_forest_plot
 function(plot_style = "classic", confidence_level = 0.95){
+  # Generate the plot and get the path to the temporary file
   path <- generate_forest_plot(plot_style, confidence_level)
+
+  # Ensure the file exists and is in a secure temp directory
+  if (!file.exists(path) || !grepl(tempdir(), normalizePath(path), fixed = TRUE)) {
+    stop("Invalid or missing plot file.")
+  }
+
+  # Read the file content
+  file_content <- readBin(path, what = "raw", n = file.info(path)$size)
+
+  # Securely delete the file after reading
+  unlink(path)
+
+  # Return the file content as a response with appropriate content type
+  plumber::as_attachment(file_content, filename = basename(path), type = "image/png")
+}
   plumber::include_file(path)
 }
 
