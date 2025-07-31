@@ -76,7 +76,10 @@ generate_report <- function(format='html', include_code=FALSE){
                       html = 'html_document',
                       pdf = 'pdf_document',
                       word = 'word_document'),
-                    output_file = paste0('report.',format),
+                    output_file = { 
+                      temp_file <- tempfile(fileext = paste0('.', format))
+                      temp_file
+                    },
                     params = list(result=res, include_code=include_code))
-  paste0('report.',format)
+  temp_file
 }
