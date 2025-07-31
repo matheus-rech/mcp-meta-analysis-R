@@ -56,3 +56,16 @@ run().catch(console.error);
 ```
 
 Run the script with `npx ts-node src/example.ts` after installing the dependencies.
+
+## R Client
+
+The `R` directory includes a small wrapper around the same MCP tools for R users.
+Install the `httr`, `jsonlite`, and `R6` packages, then source the script and run the example:
+
+```R
+source("R/meta_analysis_client.R")
+source("R/example_usage.R")
+```
+
+The example script connects to a running MCP server, uploads CSV study data,
+performs the analysis, and prints the generated report.
