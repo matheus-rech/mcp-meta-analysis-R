@@ -23,6 +23,18 @@ function(study_type = NULL, effect_measure = NULL, analysis_model = NULL){
 #* @param data_format Data format: csv, excel, revman
 #* @post /upload_study_data
 function(req, data_format = "csv"){
+  # Set file size limit (e.g., 5 MB)
+  max_file_size <- 5 * 1024 * 1024
+  if (length(req$postBody) > max_file_size) {
+    stop("File size exceeds the 5 MB limit.")
+  }
+  
+  # Validate content type
+  valid_content_types <- c("text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+  if (!req$HTTP_CONTENT_TYPE %in% valid_content_types) {
+    stop("Invalid content type. Only CSV and Excel files are allowed.")
+  }
+  
   tmp <- tempfile(fileext = ifelse(data_format == "excel", ".xlsx", ".csv"))
   writeBin(req$postBody, tmp)
   validated <- validate_data(tmp, data_format)
