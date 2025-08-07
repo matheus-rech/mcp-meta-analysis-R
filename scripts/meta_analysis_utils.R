@@ -81,10 +81,13 @@ generate_report <- function(format='html', include_code=FALSE){
                       html = 'html_document',
                       pdf = 'pdf_document',
                       word = 'word_document'),
-                    output_file = { 
-                      temp_file <- tempfile(fileext = paste0('.', format))
-                      temp_file
-                    },
+  temp_file <- tempfile(fileext = paste0('.', format))
+  rmarkdown::render('templates/meta_analysis_report.Rmd',
+                    output_format = switch(format,
+                      html = 'html_document',
+                      pdf = 'pdf_document',
+                      word = 'word_document'),
+                    output_file = temp_file,
                     params = list(result=res, include_code=include_code))
   temp_file
 }
