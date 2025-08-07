@@ -58,7 +58,7 @@ run().catch(err => {
 });
 ```
 
-Run the script with `npx ts-node src/example.ts` after installing the dependencies.
+Run the script with `npm run example` after installing the dependencies.
 
 ## R Client
 
