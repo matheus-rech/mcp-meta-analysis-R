@@ -75,6 +75,9 @@ function(req, data_format = "csv"){
 #* @param sensitivity_analysis logical
 #* @post /perform_meta_analysis
 function(heterogeneity_test = TRUE, publication_bias = TRUE, sensitivity_analysis = FALSE){
+  if (!data_uploaded) {
+    stop("Data has not been uploaded. Please upload data before performing analysis.")
+  }
   res <- perform_analysis(heterogeneity_test, publication_bias, sensitivity_analysis)
   list(status = "analyzed", summary = res$summary)
 }
