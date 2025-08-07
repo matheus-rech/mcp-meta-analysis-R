@@ -1,5 +1,14 @@
+
+# Node artifacts
+node_modules/
+ts_client/node_modules/
+ts_client/dist/
+
+# R
+.Rhistory
+.Rproj.user/
 *.RData
 *.png
 report.*
-.Rhistory
 __pycache__/
+

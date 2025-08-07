@@ -1,0 +1,17 @@
+{
+  "name": "meta-analysis-ts-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "example": "ts-node --esm src/example.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "github:modelcontextprotocol/typescript-sdk"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.4.0"
+  }
+}
