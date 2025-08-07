@@ -63,9 +63,12 @@ function(req, data_format = "csv"){
     stop("Invalid file type. Only CSV and Excel files are allowed.")
   }
   
+  # Validate the file content in memory
+  validated <- validate_data(req$postBody, data_format)
+  
+  # Write the validated content to a temporary file
   tmp <- tempfile(fileext = ifelse(data_format == "excel", ".xlsx", ".csv"))
   writeBin(req$postBody, tmp)
-  validated <- validate_data(tmp, data_format)
   list(status = "uploaded", rows = nrow(validated))
 }
 
