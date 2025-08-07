@@ -1,0 +1,5 @@
+*.RData
+*.png
+report.*
+.Rhistory
+__pycache__/

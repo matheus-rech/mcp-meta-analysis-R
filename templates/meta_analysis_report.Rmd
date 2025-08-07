@@ -1,0 +1,29 @@
+---
+title: "Meta-Analysis Report"
+output: html_document
+params:
+  result: NULL
+  include_code: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$include_code)
+```
+
+# Summary
+
+```{r}
+summary(params$result)
+```
+
+# Forest Plot
+
+```{r, echo=FALSE}
+forest(params$result)
+```
+
+# Funnel Plot
+
+```{r, echo=FALSE}
+funnel(params$result)
+```
