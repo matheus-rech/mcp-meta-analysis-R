@@ -55,13 +55,27 @@ function(heterogeneity_test = TRUE, publication_bias = TRUE, sensitivity_analysi
 }
 
 #* Generate forest plot
+#* @param TE Numeric vector of effect sizes
+#* @param seTE Numeric vector of standard errors
 #* @param plot_style Style of plot (classic, modern, journal_specific)
 #* @param confidence_level Confidence level for intervals
 #* @post /generate_forest_plot
-function(plot_style = "classic", confidence_level = 0.95) {
+function(TE, seTE, plot_style = "classic", confidence_level = 0.95) {
+  if (missing(TE) || missing(seTE)) {
+    return(list(
+      status = "error",
+      message = "Both 'TE' (effect sizes) and 'seTE' (standard errors) must be provided."
+    ))
+  }
+  if (length(TE) != length(seTE)) {
+    return(list(
+      status = "error",
+      message = "'TE' and 'seTE' must be vectors of the same length."
+    ))
+  }
   plot_path <- tempfile(fileext = ".png")
   png(plot_path)
-  forest(meta::metagen(TE = c(0.2, -0.1), seTE = c(0.05, 0.06)))
+  forest(meta::metagen(TE = as.numeric(TE), seTE = as.numeric(seTE), level = confidence_level * 100))
   dev.off()
   list(status = "plot_generated", path = plot_path, style = plot_style, conf_level = confidence_level)
 }
