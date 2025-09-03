@@ -33,7 +33,6 @@ function(study_type = "clinical_trial", effect_measure = "OR", analysis_model = 
 #* @post /upload_study_data
 function(data_format = "csv", validation_level = "basic", file) {
   tmp <- tempfile(fileext = switch(data_format, csv = ".csv", excel = ".xlsx", revman = ".rm5", ".dat"))
-  on.exit(unlink(tmp))
   file.copy(file$datapath, tmp)
   list(status = "uploaded", path = tmp, validation = validation_level)
 }
