@@ -32,7 +32,7 @@ class MetaAnalysisClient:
         result = await self.session.call_tool(name, arguments)
         if result.isError:
             raise RuntimeError(result.content[0].text if result.content else "Tool call failed")
-        return result.structuredContent if not hasattr(result, 'structured_content') else result.structured_content
+        return result.structured_content if hasattr(result, 'structured_content') else result.structuredContent
 
     async def initialize_meta_analysis(self, **params):
         return await self._call_tool("initialize_meta_analysis", params)
