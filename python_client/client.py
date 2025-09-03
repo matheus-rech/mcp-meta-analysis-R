@@ -27,7 +27,8 @@ class MetaAnalysisClient:
             await self._transport.__aexit__(exc_type, exc, tb)
 
     async def _call_tool(self, name: str, arguments: dict | None = None):
-        assert self.session is not None, "Client not initialized"
+        if self.session is None:
+            raise RuntimeError("Client not initialized")
         result = await self.session.call_tool(name, arguments)
         if result.isError:
             raise RuntimeError(result.content[0].text if result.content else "Tool call failed")
