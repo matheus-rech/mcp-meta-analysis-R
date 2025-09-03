@@ -4,11 +4,21 @@ node_modules/
 ts_client/node_modules/
 ts_client/dist/
 
+# Python artifacts
+python_client/__pycache__/
+python_client/*.pyc
+python_client/.pytest_cache/
+*.egg-info/
+
 # R
 .Rhistory
 .Rproj.user/
 *.RData
 *.png
 report.*
-__pycache__/
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
 
