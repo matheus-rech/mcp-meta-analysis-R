@@ -1,7 +1,16 @@
 
 # MCP Meta-Analysis
 
-This repository contains design notes for a meta-analysis server and a simple TypeScript client.
+This repository contains a meta-analysis server implementation with multiple client options.
+
+## Features
+- Upload study data (CSV/Excel)
+- Run a meta-analysis with the **meta** and **metafor** packages
+- Generate forest and funnel plots with flexible input options
+- Produce HTML/PDF/Word reports via R Markdown
+- REST API implemented with **plumber**
+- Comprehensive input validation and error handling
+- Containerized using Docker
 
 ## TypeScript Client
 
@@ -61,6 +70,56 @@ run().catch(err => {
 
 Run the script with `npm run example` after installing the dependencies.
 
+## Python Client
+
+The `python_client` directory provides a Python async client for the MCP Meta-Analysis server with proper error handling and input validation.
+
+### Installing Dependencies
+
+```bash
+cd python_client
+pip install -r requirements.txt
+```
+
+### Example Usage
+
+```python
+import asyncio
+from python_client import MetaAnalysisClient
+
+async def example():
+    async with MetaAnalysisClient("http://localhost:8080") as client:
+        # Initialize meta-analysis
+        await client.initialize_meta_analysis(
+            study_type="clinical_trial",
+            effect_measure="OR",
+            analysis_model="random"
+        )
+        
+        # Upload study data
+        csv_data = """study,effect_size,se
+Study1,0.2,0.05
+Study2,-0.1,0.06
+Study3,0.3,0.04"""
+        
+        await client.upload_study_data(data_content=csv_data, data_format="csv")
+        
+        # Perform meta-analysis
+        await client.perform_meta_analysis()
+        
+        # Generate forest plot with custom data
+        await client.generate_forest_plot(
+            te=[0.2, -0.1, 0.3],
+            se_te=[0.05, 0.06, 0.04]
+        )
+        
+        # Generate report
+        report = await client.generate_report(format="html")
+        print("Analysis completed!")
+
+asyncio.run(example())
+```
+
 ## R Client
 
 The `R` directory includes a small wrapper around the same MCP tools for R users.
@@ -73,18 +132,6 @@ source("R/example_usage.R")
 
 The example script connects to a running MCP server, uploads CSV study data,
 performs the analysis, and prints the generated report.
-=======
-# MCP Meta-Analysis Server
-
-This repository provides a minimal implementation of an MCP (Model Context Protocol) server for performing meta-analysis in R.
-
-## Features
-- Upload study data (CSV/Excel)
-- Run a meta-analysis with the **meta** and **metafor** packages
-- Generate forest and funnel plots
-- Produce a simple HTML/PDF/Word report via R Markdown
-- REST API implemented with **plumber**
-- Containerized using Docker
 
 ## Usage
 
@@ -109,6 +156,20 @@ docker run -p 8080:8080 mcp-meta
    - `POST /generate_report`
 
 Upload data should contain columns `study`, `effect_size`, and `se`.
+
+## Enhanced Features
+
+### Forest Plot Flexibility
+The forest plot endpoint now supports both:
+- Using stored analysis data: `POST /generate_forest_plot`
+- Direct input of effect sizes: `POST /generate_forest_plot` with `TE` and `seTE` parameters
+
+### Comprehensive Input Validation
+All endpoints now include:
+- Parameter validation with descriptive error messages
+- Proper HTTP status codes (400 for bad requests, 413 for large files, 500 for server errors)
+- Data type and value validation
+- Required field checking
 
 ## Development
 
