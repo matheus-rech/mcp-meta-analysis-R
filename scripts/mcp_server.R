@@ -97,6 +97,6 @@ function(format = "html", include_code = FALSE) {
 
 # Start the server if this script is run directly
 if (identical(environment(), globalenv())) {
-  pr("/", filters = list()) %>%
+  pr() %>%
     pr_run(host = "0.0.0.0", port = 8080)
 }
