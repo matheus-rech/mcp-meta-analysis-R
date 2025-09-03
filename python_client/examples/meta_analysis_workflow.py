@@ -12,9 +12,11 @@ async def main():
             effect_measure="OR",
             analysis_model="random",
         )
+        with open("study_data.csv") as f:
+            data_content = f.read()
         await client.upload_study_data(
             data_format="csv",
-            data_content=open("study_data.csv").read(),
+            data_content=data_content,
             validation_level="basic",
         )
         await client.perform_meta_analysis(
