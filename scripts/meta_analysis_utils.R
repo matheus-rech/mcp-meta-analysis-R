@@ -6,17 +6,48 @@ library(jsonlite)
 .current_data <- NULL
 
 # Validate uploaded data
-validate_data <- function(path, format){
-  if(format == 'excel'){
-    data <- readxl::read_excel(path)
-  } else {
-    data <- read.csv(path)
-  }
+validate_data <- function(raw_data, format){
+  # Write raw data to temporary file for reading
+  temp_file <- tempfile(fileext = ifelse(format == "excel", ".xlsx", ".csv"))
+  on.exit(unlink(temp_file))
+  writeBin(raw_data, temp_file)
+  
+  # Read data based on format
+  data <- tryCatch({
+    if(format == 'excel'){
+      readxl::read_excel(temp_file)
+    } else {
+      read.csv(temp_file)
+    }
+  }, error = function(e) {
+    stop(paste("Failed to read", format, "file:", e$message))
+  })
+  
+  # Validate required columns
   required <- c('study', 'effect_size', 'se')
   missing_cols <- setdiff(required, names(data))
   if(length(missing_cols) > 0){
-    stop(paste('Missing columns:', paste(missing_cols, collapse=', ')))
+    stop(paste('Missing required columns:', paste(missing_cols, collapse=', ')))
   }
+  
+  # Validate data types and values
+  if (!is.numeric(data$effect_size)) {
+    stop("Column 'effect_size' must contain numeric values")
+  }
+  if (!is.numeric(data$se)) {
+    stop("Column 'se' must contain numeric values")
+  }
+  if (any(data$se <= 0, na.rm = TRUE)) {
+    stop("Column 'se' must contain positive values only")
+  }
+  if (any(is.na(data$effect_size))) {
+    stop("Column 'effect_size' cannot contain missing values")
+  }
+  if (any(is.na(data$se))) {
+    stop("Column 'se' cannot contain missing values")
+  }
+  
+  # Store validated data
   if (!exists("meta_analysis_env", envir = .GlobalEnv)) {
     assign("meta_analysis_env", new.env(parent = emptyenv()), envir = .GlobalEnv)
   }
@@ -44,9 +75,23 @@ perform_analysis <- function(heterogeneity_test=TRUE, publication_bias=TRUE, sen
   list(summary=summary(m), heterogeneity=hetero, publication_bias=pb)
 }
 
-# Generate forest plot
+# Generate forest plot from stored analysis results
 generate_forest_plot <- function(plot_style='classic', confidence_level=0.95, model='random'){
   res <- get('.current_result', envir=.GlobalEnv)
+  temp_file <- tempfile(pattern = "forest_plot", fileext = ".png")
+  png(temp_file, width=800, height=600)
+  comb.fixed <- model %in% c('fixed', 'both')
+  comb.random <- model %in% c('random', 'both')
+  forest(res, comb.fixed=comb.fixed, comb.random=comb.random, digits=2)
+  dev.off()
+  temp_file
+}
+
+# Generate forest plot from provided effect sizes and standard errors
+generate_forest_plot_with_data <- function(TE, seTE, plot_style='classic', confidence_level=0.95, model='random'){
+  # Create a meta-analysis object with the provided data
+  res <- metagen(TE = TE, seTE = seTE, level = confidence_level * 100, sm = "SMD")
+  
   temp_file <- tempfile(pattern = "forest_plot", fileext = ".png")
   png(temp_file, width=800, height=600)
   comb.fixed <- model %in% c('fixed', 'both')
