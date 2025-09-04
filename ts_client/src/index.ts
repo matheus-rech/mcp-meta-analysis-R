@@ -26,6 +26,7 @@ export class MetaAnalysisClient {
     effect_measure: string;
     analysis_model: string;
   }): Promise<unknown> {
+    return this.client.callTool({ name: 'initialize_meta_analysis', arguments: params });
   }
 
   async uploadStudyData(params: {
