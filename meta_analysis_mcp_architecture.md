@@ -26,11 +26,13 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
 #### B. MCP Tools Interface
 ```json
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "tools": [
     {
       "name": "initialize_meta_analysis",
       "description": "Start new meta-analysis project with guided setup",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
           "study_type": {"type": "string", "enum": ["clinical_trial", "observational", "diagnostic"]},
@@ -43,6 +45,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
       "name": "upload_study_data",
       "description": "Upload and validate study data",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
           "data_format": {"type": "string", "enum": ["csv", "excel", "revman"]},
@@ -55,6 +58,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
       "name": "perform_meta_analysis",
       "description": "Execute meta-analysis with automated checks",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
           "heterogeneity_test": {"type": "boolean", "default": true},
@@ -67,10 +71,21 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
       "name": "generate_forest_plot",
       "description": "Create publication-ready forest plot",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-          "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"]},
-          "confidence_level": {"type": "number", "default": 0.95},
+          "TE": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "Numeric vector of effect sizes (optional - uses stored data if not provided)"
+          },
+          "seTE": {
+            "type": "array", 
+            "items": {"type": "number", "exclusiveMinimum": 0},
+            "description": "Numeric vector of standard errors (optional - uses stored data if not provided). All values must be positive."
+          },
+          "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"], "default": "classic"},
+          "confidence_level": {"type": "number", "minimum": 0, "maximum": 1, "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
           "custom_labels": {"type": "object"}
         }
       }
@@ -79,6 +94,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
       "name": "assess_publication_bias",
       "description": "Perform publication bias assessment",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
           "methods": {"type": "array", "items": {"type": "string", "enum": ["funnel_plot", "egger_test", "begg_test", "trim_fill"]}}
@@ -89,6 +105,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
       "name": "generate_report",
       "description": "Create comprehensive meta-analysis report",
       "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
           "format": {"type": "string", "enum": ["html", "pdf", "word"]},
