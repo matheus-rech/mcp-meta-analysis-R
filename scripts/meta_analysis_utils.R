@@ -38,7 +38,7 @@ validate_data <- function(data, validation_level='basic'){
 
 # Perform meta-analysis using random/fixed automatically
 perform_analysis <- function(heterogeneity_test=TRUE, publication_bias=TRUE, sensitivity_analysis=FALSE, effect_measure='SMD'){
-  data <- get('.current_data', envir=.GlobalEnv)
+  data <- get('.current_data', envir = get("meta_analysis_env", envir = .GlobalEnv))
   m <- metagen(TE=data$effect_size, seTE=data$se, studlab=data$study, sm=effect_measure, method.tau='DL')
   if(heterogeneity_test){
     hetero <- list(Q = m$Q, df = m$df.Q, p = m$pval.Q, I2 = m$I2)
