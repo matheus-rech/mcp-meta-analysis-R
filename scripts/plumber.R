@@ -68,7 +68,7 @@ function(req, res, data_format = "csv", data_content, validation_level = "basic"
   
   # Validate file content type
   content_type_valid <- grepl("text/csv|application/.*excel.*|application/.*spreadsheet.*", 
-                             req$headers$`content-type` %||% "", ignore.case = TRUE)
+                             if (is.null(req$headers$`content-type`)) "" else req$headers$`content-type`, ignore.case = TRUE)
   
   # Check file signatures
   is_csv <- function(raw_bytes) {
