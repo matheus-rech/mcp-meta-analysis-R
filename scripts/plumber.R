@@ -209,42 +209,40 @@ function(req, res, heterogeneity_test = TRUE, publication_bias = TRUE, sensitivi
 function(req, res, TE, seTE, plot_style = "classic", confidence_level = 0.95) {
   
   # Validate required parameters
-  if (!is.null(TE) || !is.null(seTE)) {
-    if (is.null(TE) || is.null(seTE)) {
-      res <- list(
-        status = "error",
-        message = "Both 'TE' (effect sizes) and 'seTE' (standard errors) must be provided together."
-      )
-      return(res)
-    }
-    
-    # Convert to numeric and validate
-    TE_num <- tryCatch(as.numeric(TE), error = function(e) NULL)
-    seTE_num <- tryCatch(as.numeric(seTE), error = function(e) NULL)
-    
-    if (is.null(TE_num) || is.null(seTE_num)) {
-      res <- list(
-        status = "error",
-        message = "'TE' and 'seTE' must be numeric values."
-      )
-      return(res)
-    }
-    
-    if (length(TE_num) != length(seTE_num)) {
-      res <- list(
-        status = "error",
-        message = "'TE' and 'seTE' must be vectors of the same length."
-      )
-      return(res)
-    }
-    
-    if (any(seTE_num <= 0, na.rm = TRUE)) {
-      res <- list(
-        status = "error", 
-        message = "'seTE' values must be positive."
-      )
-      return(res)
-    }
+  if (is.null(TE) || is.null(seTE)) {
+    res <- list(
+      status = "error",
+      message = "Both 'TE' (effect sizes) and 'seTE' (standard errors) must be provided together."
+    )
+    return(res)
+  }
+  
+  # Convert to numeric and validate
+  TE_num <- tryCatch(as.numeric(TE), error = function(e) NULL)
+  seTE_num <- tryCatch(as.numeric(seTE), error = function(e) NULL)
+  
+  if (is.null(TE_num) || is.null(seTE_num)) {
+    res <- list(
+      status = "error",
+      message = "'TE' and 'seTE' must be numeric values."
+    )
+    return(res)
+  }
+  
+  if (length(TE_num) != length(seTE_num)) {
+    res <- list(
+      status = "error",
+      message = "'TE' and 'seTE' must be vectors of the same length."
+    )
+    return(res)
+  }
+  
+  if (any(seTE_num <= 0, na.rm = TRUE)) {
+    res <- list(
+      status = "error", 
+      message = "'seTE' values must be positive."
+    )
+    return(res)
   }
   
   # Validate plot_style parameter
