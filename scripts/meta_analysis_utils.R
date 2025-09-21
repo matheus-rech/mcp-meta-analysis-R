@@ -70,6 +70,9 @@ generate_forest_plot <- function(plot_style='classic', confidence_level=0.95, mo
 
 # Assess publication bias with funnel plot
 assess_publication_bias <- function(methods=c('funnel_plot','egger_test')){
+  if (!exists('.current_result', envir = .GlobalEnv)) {
+    stop("No analysis results found. Please run perform_analysis() first.")
+  }
   res <- get('.current_result', envir=.GlobalEnv)
   out <- list()
   if('funnel_plot' %in% methods){
