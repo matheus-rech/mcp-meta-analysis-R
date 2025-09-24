@@ -121,11 +121,6 @@ assess_publication_bias <- function(methods=c('funnel_plot','egger_test')){
 # Generate report
 generate_report <- function(format='html', include_code=FALSE){
   res <- get('.current_result', envir=.GlobalEnv)
-  rmarkdown::render('templates/meta_analysis_report.Rmd',
-                    output_format = switch(format,
-                      html = 'html_document',
-                      pdf = 'pdf_document',
-                      word = 'word_document'),
   temp_file <- tempfile(fileext = paste0('.', format))
   rmarkdown::render('templates/meta_analysis_report.Rmd',
                     output_format = switch(format,

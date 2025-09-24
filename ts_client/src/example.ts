@@ -1,5 +1,5 @@
 import { MetaAnalysisClient } from './index.js';
-import { readFile } from 'fs/promises';
+import { readFile, access } from 'fs/promises';
 
 async function run() {
   const client = new MetaAnalysisClient('http://localhost:8080/mcp');
