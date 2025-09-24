@@ -26,6 +26,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
 #### B. MCP Tools Interface
 ```json
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "tools": [
     {
       "name": "initialize_meta_analysis",
@@ -75,9 +76,19 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
+          "TE": {
+            "type": "array",
+            "items": {"type": "number"},
+            "description": "Numeric vector of effect sizes (optional - uses stored data if not provided)"
+          },
+          "seTE": {
+            "type": "array", 
+            "items": {"type": "number", "exclusiveMinimum": 0},
+            "description": "Numeric vector of standard errors (optional - uses stored data if not provided). All values must be positive."
+          },
           "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"], "default": "classic"},
-          "confidence_level": {"type": "number", "default": 0.95, "minimum": 0, "maximum": 1},
-          "custom_labels": {"type": "object", "additionalProperties": {"type": "string"}}
+          "confidence_level": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
+          "custom_labels": {"type": "object"}
         }
       }
     },

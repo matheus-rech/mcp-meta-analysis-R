@@ -211,15 +211,43 @@ function(heterogeneity_test = TRUE, publication_bias = TRUE, sensitivity_analysi
 #* @param plot_style Plot style: classic, modern, journal_specific
 #* @param confidence_level Confidence level
 #* @post /generate_forest_plot
-function(TE = NULL, seTE = NULL, plot_style = "classic", confidence_level = 0.95){
+function(TE = NULL, seTE = NULL, plot_style = "classic", confidence_level = 0.95, res){
+  # Validate plot_style parameter
+  valid_plot_styles <- c("classic", "modern", "journal_specific")
+  if (!plot_style %in% valid_plot_styles) {
+    res$status <- 400
+    return(list(
+      status = "error",
+      message = paste("Invalid plot_style. Must be one of:", paste(valid_plot_styles, collapse = ", "))
+    ))
+  }
+  
+  # Validate confidence_level parameter
+  confidence_level_num <- tryCatch(as.numeric(confidence_level), error = function(e) NULL)
+  if (is.null(confidence_level_num) || length(confidence_level_num) != 1) {
+    res$status <- 400
+    return(list(
+      status = "error",
+      message = "confidence_level must be a single numeric value."
+    ))
+  }
+  
+  if (confidence_level_num <= 0 || confidence_level_num >= 1) {
+    res$status <- 400
+    return(list(
+      status = "error",
+      message = "confidence_level must be between 0 and 1 (exclusive)."
+    ))
+  }
+  
   # Validate input parameters when provided
   if (!is.null(TE) || !is.null(seTE)) {
     if (is.null(TE) || is.null(seTE)) {
-      res <- list(
+      res$status <- 400
+      return(list(
         status = "error",
         message = "Both 'TE' (effect sizes) and 'seTE' (standard errors) must be provided together."
-      )
-      return(res)
+      ))
     }
     
     # Convert to numeric and validate
@@ -227,43 +255,61 @@ function(TE = NULL, seTE = NULL, plot_style = "classic", confidence_level = 0.95
     seTE_num <- tryCatch(as.numeric(seTE), error = function(e) NULL)
     
     if (is.null(TE_num) || is.null(seTE_num)) {
-      res <- list(
+      res$status <- 400
+      return(list(
         status = "error",
         message = "'TE' and 'seTE' must be numeric values."
-      )
-      return(res)
+      ))
     }
     
     if (length(TE_num) != length(seTE_num)) {
-      res <- list(
+      res$status <- 400
+      return(list(
         status = "error",
         message = "'TE' and 'seTE' must be vectors of the same length."
-      )
-      return(res)
+      ))
     }
     
     if (length(TE_num) == 0) {
-      res <- list(
+      res$status <- 400
+      return(list(
         status = "error",
         message = "'TE' and 'seTE' cannot be empty."
-      )
-      return(res)
+      ))
+    }
+    
+    # Validate that seTE values are positive (standard errors must be positive)
+    if (any(seTE_num <= 0, na.rm = TRUE)) {
+      res$status <- 400
+      return(list(
+        status = "error",
+        message = "All 'seTE' (standard error) values must be positive."
+      ))
+    }
+    
+    # Check for missing values
+    if (any(is.na(TE_num)) || any(is.na(seTE_num))) {
+      res$status <- 400
+      return(list(
+        status = "error",
+        message = "'TE' and 'seTE' cannot contain missing (NA) values."
+      ))
     }
     
     # Generate plot with provided data
-    path <- generate_forest_plot_with_data(TE_num, seTE_num, plot_style, confidence_level)
+    path <- generate_forest_plot_with_data(TE_num, seTE_num, plot_style, confidence_level_num)
   } else {
     # Use stored data from previous analysis
-    path <- generate_forest_plot(plot_style, confidence_level)
+    path <- generate_forest_plot(plot_style, confidence_level_num)
   }
 
   # Ensure the file exists and is in a secure temp directory
   if (!file.exists(path) || !grepl(tempdir(), normalizePath(path), fixed = TRUE)) {
-    res <- list(
+    res$status <- 500
+    return(list(
       status = "error",
       message = "Invalid or missing plot file."
-    )
-    return(res)
+    ))
   }
 
   # Read the file content
