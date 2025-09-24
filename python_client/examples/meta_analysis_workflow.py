@@ -12,7 +12,8 @@ async def main():
             effect_measure="OR",
             analysis_model="random",
         )
-        with open("study_data.csv") as f:
+        # TODO: Replace 'path/to/your/study_data.csv' with the path to your study data file
+        with open("path/to/your/study_data.csv") as f:
             data_content = f.read()
         await client.upload_study_data(
             data_format="csv",
