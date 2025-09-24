@@ -89,7 +89,6 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
           "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"], "default": "classic"},
           "confidence_level": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
           "custom_labels": {"type": "object"}
-
         }
       }
     },
