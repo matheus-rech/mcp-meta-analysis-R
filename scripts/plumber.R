@@ -2,7 +2,13 @@
 library(plumber)
 library(meta)
 library(metafor)
-source('meta_analysis_utils.R')
+library(here)
+meta_utils_path <- here::here('meta_analysis_utils.R')
+if (file.exists(meta_utils_path)) {
+  source(meta_utils_path)
+} else {
+  stop(paste("meta_analysis_utils.R not found at", meta_utils_path))
+}
 
 # Global data storage
 .session_data <- new.env()
