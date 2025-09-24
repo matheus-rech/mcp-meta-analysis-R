@@ -38,7 +38,8 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
           "study_type": {"type": "string", "enum": ["clinical_trial", "observational", "diagnostic"]},
           "effect_measure": {"type": "string", "enum": ["OR", "RR", "MD", "SMD", "HR"]},
           "analysis_model": {"type": "string", "enum": ["fixed", "random", "auto"]}
-        }
+        },
+        "required": ["study_type", "effect_measure", "analysis_model"]
       }
     },
     {
@@ -50,8 +51,9 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
         "properties": {
           "data_format": {"type": "string", "enum": ["csv", "excel", "revman"]},
           "data_content": {"type": "string"},
-          "validation_level": {"type": "string", "enum": ["basic", "comprehensive"]}
-        }
+          "validation_level": {"type": "string", "enum": ["basic", "comprehensive"], "default": "basic"}
+        },
+        "required": ["data_format", "data_content"]
       }
     },
     {
@@ -87,6 +89,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
           "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"], "default": "classic"},
           "confidence_level": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
           "custom_labels": {"type": "object"}
+
         }
       }
     },
@@ -97,8 +100,17 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-          "methods": {"type": "array", "items": {"type": "string", "enum": ["funnel_plot", "egger_test", "begg_test", "trim_fill"]}}
-        }
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["funnel_plot", "egger_test", "begg_test", "trim_fill"]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": ["methods"]
       }
     },
     {
@@ -111,7 +123,8 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
           "format": {"type": "string", "enum": ["html", "pdf", "word"]},
           "include_code": {"type": "boolean", "default": false},
           "journal_template": {"type": "string"}
-        }
+        },
+        "required": ["format"]
       }
     }
   ]
