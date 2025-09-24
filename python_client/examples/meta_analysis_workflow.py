@@ -1,12 +1,10 @@
 """Example workflow using the MetaAnalysisClient."""
-import anyio
-from httpx import BasicAuth
+import asyncio
 from python_client import MetaAnalysisClient
 
 async def main():
-    # Replace credentials and server URL with your deployment details
-    auth = BasicAuth("user", "pass")
-    async with MetaAnalysisClient("http://localhost:8000/sse", auth=auth) as client:
+    # Connect to the R plumber server
+    async with MetaAnalysisClient("http://localhost:8080") as client:
         await client.initialize_meta_analysis(
             study_type="clinical_trial",
             effect_measure="OR",
@@ -30,4 +28,4 @@ async def main():
         await client.generate_report(format="html", include_code=False)
 
 if __name__ == "__main__":
-    anyio.run(main)
+    asyncio.run(main)
