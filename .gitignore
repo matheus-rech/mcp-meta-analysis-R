@@ -22,3 +22,4 @@ report.*
 *.tmp
 *.temp
 
+__pycache__/
