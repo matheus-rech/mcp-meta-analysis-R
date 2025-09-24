@@ -85,7 +85,7 @@ A comprehensive Model Context Protocol (MCP) server designed to democratize meta
             "description": "Numeric vector of standard errors (optional - uses stored data if not provided). All values must be positive."
           },
           "plot_style": {"type": "string", "enum": ["classic", "modern", "journal_specific"], "default": "classic"},
-          "confidence_level": {"type": "number", "minimum": 0, "maximum": 1, "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
+          "confidence_level": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1, "default": 0.95},
           "custom_labels": {"type": "object"}
         }
       }
