@@ -1,4 +1,4 @@
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { Client } from '@modelcontextprotocol/sdk/client';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 
 export class MetaAnalysisClient {
@@ -26,6 +26,7 @@ export class MetaAnalysisClient {
     effect_measure: string;
     analysis_model: string;
   }): Promise<unknown> {
+    return this.client.callTool({ name: 'initialize_meta_analysis', arguments: params });
   }
 
   async uploadStudyData(params: {
